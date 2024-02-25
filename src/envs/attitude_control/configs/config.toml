@@ -1,0 +1,191 @@
+# = = = = = = = = = = = = = = = = = = = = = = = = = #
+# BASILISK FRAMEWORK CONFIGS
+# = = = = = = = = = = = = = = = = = = = = = = = = = #
+
+# tasks and processes
+[basilisk]
+dyn_process_str = "dynamic_process"
+fsw_process_str = "flight_sw_process"
+dyn_task_str = "dynamic_task"
+fsw_task_str = "flight_sw_task"
+dyn_step_frequency = 10                                     # [Hz]
+fsw_step_frequency = 2                                      # [Hz]
+
+# spacecraft body model
+[basilisk.spacecraft_body]
+model_tag_str = "spacecraft_body"
+mass = 500                                                  # [kg]
+moi = [500, 500, 500]                                       # [kg*m^2]
+poi = [0, 0, 0]                                             # [kg*m^2]
+initial_angular_velocity = [0, 0, 0]                        # [rad/s]
+use_random_mass = true                                     # true, false
+use_random_moi = true                                      # true, false
+use_random_poi = false                                      # true, false
+use_random_angular_velocity = false                         # true, false
+random_mass_max = 500                                       # [kg]
+random_mass_min = 50                                        # [kg]
+random_moi_max = [500, 500, 500]                               # [kg*m^2]
+random_moi_min = [50, 50, 50]                            # [kg*m^2]
+random_poi_max = [1, 1, 1]                                  # [kg*m^2]
+random_poi_min = [0, 0, 0]                                  # [kg*m^2]
+random_angular_velocity_max = [1, 1, 1]                     # [rad/s]
+random_angular_velocity_min = [-1, -1, -1]                  # [rad/s]
+
+# reaction wheels model
+[basilisk.reaction_wheels]
+configuration = "orthogonal"                                # "orthogonal", "pyramidal", "tetrahedral"
+model = "Honeywell_HR16"                                    # "Honeywell_HR16"
+angular_momentum_max = 50                                   # [Nms]
+torque_max = 0.4                                            # [Nm]
+initial_angular_velocity = [0, 0, 0, 0]                     # [rad/s]
+use_random_angular_velocity = true                          # true, false
+random_angular_velocity_max = [200, 200, 200, 200]          # [rad/s]
+random_angular_velocity_min = [-200, -200, -200, -200]      # [rad/s]
+state_effector_model_tag_str = "rw_cluster"
+voltage_interface_model_tag_str = "rw_voltage_if"
+voltage_max = 10                                            # [V]
+voltage_error = 0                                           # []
+torque_bias = 0                                             # [Nm]
+torque_control_map_model_tag_str = "rw_torque_map"
+torque_voltage_map_model_tag_str = "rw_voltage_map"
+
+# navigation sensor model
+[basilisk.navigation_sensor]
+model_tag_str = "navigation_sensor"
+use_measurement_errors = true                               # true, false
+attitude_meas_std = 1e-3                                    # [deg]
+rate_meas_std = 1e-8                                        # [rad/s]
+attitude_error_max = 1e-2                                   # [deg]
+rate_error_max = 1e-7                                       # [rad/s]
+
+# inertial reference model
+[basilisk.inertial_reference]
+model_tag_str = "inertial_reference"
+
+# atittude tracking error model
+[basilisk.attitude_tracking_err]
+model_tag_str = "attitude_tracking_error"
+
+# feedback controller model
+[basilisk.feedback_controller]
+model_tag_str = "feedback_controller"
+k_p = 3.5
+k_d = 30
+
+# reinforcement learning controller interface model
+[basilisk.rl_controller_interface]
+model_tag_str = "rl_controller_if"
+
+# external disturbances model
+[basilisk.external_disturbances]
+model_tag_str = "external_disturbances"
+
+# external disturbances interface model
+[basilisk.external_disturbances_interface]
+model_tag_str = "external_disturbances_if"
+
+# = = = = = = = = = = = = = = = = = = = = = = = = = #
+# GYMNASIUM ENVIRONMENT CONFIGS
+# = = = = = = = = = = = = = = = = = = = = = = = = = #
+
+# generic configs
+[gymnasium]
+epoch_time_horizon = 100                                   # [s]
+use_random_seed = false                                     # true, false
+random_seed = 0
+normalize_observation = true                                # true, false
+normalize_reward = true                                     # true, false
+
+# observation space
+[gymnasium.observation_space]
+model_id = 1
+
+# action space
+[gymnasium.action_space]
+model_id = 1
+
+# reward function
+[gymnasium.reward_function]
+model_id = 1
+
+# = = = = = = = = = = = = = = = = = = = = = = = = = #
+# REFERENCE GENERATOR CONFIGS
+# = = = = = = = = = = = = = = = = = = = = = = = = = #
+
+# generic configs
+[reference_generator]
+use_random_initial_angular_error = true
+initial_angular_error = 40                                  # [deg]
+random_initial_angular_errorr_max = 180                     # [deg]
+random_initial_angular_errorr_min = 0                       # [deg]
+
+# = = = = = = = = = = = = = = = = = = = = = = = = = #
+# DISTURBANCE GENERATOR CONFIGS
+# = = = = = = = = = = = = = = = = = = = = = = = = = #
+
+# generic configs
+[disturbances_generator]
+use_disturbances = false                                    # true, false
+
+# constant torques
+[disturbances_generator.constant_torques]
+disturbances_number = 0
+disturbances_arrays = [
+    [1, 0, 0],                                              # [Nm]
+    [0, 0, 1],                                              # [Nm]
+    [0, 0, 0]                                               # [Nm]
+]
+disturbances_time_windows = [
+    [100, 105],                                             # [s]
+    [0, 5],                                                 # [s]
+    [0, 0]                                                  # [s]
+]
+disturbances_frames = [
+    "inertial",                                             # "fixed", "inertial"
+    "fixed",                                                # "fixed", "inertial"
+    "fixed"                                                 # "fixed", "inertial"
+]
+
+# random torques
+[disturbances_generator.random_torques]
+disturbances_number = 0
+max_amplitudes = [
+    [1, 1, 1],                                              # [Nm]
+    [1, 0, 0],                                              # [Nm]
+    [0, 0, 0]                                               # [Nm]
+]
+min_amplitudes = [
+    [-1, -1, -1],                                           # [Nm]
+    [0, -1, 0],                                             # [Nm]
+    [0, 0, 0]                                               # [Nm]
+]
+disturbances_time_windows = [
+    [100, 105],                                             # [s]
+    [10, 50],                                               # [s]
+    [0, 0]                                                  # [s]
+]
+
+# sinusoidal torques
+[disturbances_generator.sinusoidal_torques]
+disturbances_number = 0
+disturbances_arrays = [
+    [0.2, 0.5, 0.1],                                        # [Nm]
+    [5, 0, 0],                                              # [Nm]
+    [0, 0, 0]                                               # [Nm]
+]
+disturbances_frequencies = [
+    [5, 5, 5],                                              # [Hz]
+    [1, 0, 0],                                              # [Hz]
+    [0, 0, 0]                                               # [Hz]
+]
+disturbances_time_windows = [
+    [0, 100],                                               # [s]
+    [0, 0],                                                 # [s]
+    [0, 0]                                                  # [s]
+]
+disturbances_frames = [
+    "fixed",                                                # "fixed", "inertial"
+    "inertial",                                             # "fixed", "inertial"
+    "fixed"                                                 # "fixed", "inertial"
+]
+

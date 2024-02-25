@@ -1,0 +1,13 @@
+numpy==1.23.5
+scipy
+matplotlib
+gymnasium[all]
+tomli
+plotly
+stable-baselines3
+torch
+sb3-contrib
+tqdm
+rich
+tensorboard
+psutil
