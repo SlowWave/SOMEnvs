@@ -101,6 +101,3 @@ class DisturbancesGenerator():
         return self.torques
 
 
-if __name__ == "__main__":
-    dg = DisturbancesGenerator()
-

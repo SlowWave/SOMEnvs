@@ -190,23 +190,3 @@ class AttitudeControlEnv(gym.Env):
         # store simulation states data
         self.storage.update_records(bsk_states, action, is_last_step)
 
-
-if __name__ == "__main__":
-
-    import time
-    import numpy as np
-
-    env = AttitudeControlEnv()
-    env.reset()
-
-    terminated = False
-    t1 = time.time()
-    while not terminated:
-        action = env.action_space.sample()
-        # action = np.array([0., 0., 0.])
-        observation, reward, terminated, truncated, info = env.step(action)
-    t2 = time.time()
-
-    print(t2-t1)
-
-    env.plot_results()

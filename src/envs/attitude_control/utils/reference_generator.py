@@ -59,7 +59,3 @@ class ReferenceGenerator():
         return self.mrp_reference
 
 
-if __name__ == "__main__":
-
-    rg = ReferenceGenerator()
-    print(rg.mrp_reference)

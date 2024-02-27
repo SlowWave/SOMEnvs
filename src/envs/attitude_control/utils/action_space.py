@@ -151,10 +151,3 @@ class ActionSpaceModel():
 
         return action
 
-
-if __name__ == "__main__":
-
-    act_model = ActionSpaceModel()
-    act_space = act_model.get_action_space()
-    sample = act_space.sample()
-    print(sample)

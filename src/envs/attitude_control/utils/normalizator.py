@@ -139,23 +139,3 @@ class Normalizator():
             json.dump(norm_stats, json_file)
 
 
-
-
-if __name__ == '__main__':
-
-    output_filepath = os.path.dirname(__file__)
-
-    norm = Normalizator(7)
-
-    obs = np.array([1, 0, 0, 0, 10, -30, 0])
-    reward = 12
-    for i in range(100):
-        obs_ = norm.get_normalized_obs(obs)
-        reward_ = norm.get_normalized_reward(reward)
-        print(obs_, reward_)
-
-
-
-    # output_filepath = os.path.dirname(__file__)
-
-    # norm.save_stats(output_filepath)
