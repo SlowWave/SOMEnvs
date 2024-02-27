@@ -178,7 +178,7 @@ class BSKSimulationContainer(SimulationBaseClass.SimBaseClass):
         self.spacecraft_body.addDynamicEffector(self.external_disturbances)
 
         # add external disturbances object to dynamic task
-        self.AddModelToTask(self.dyn_task_str, self.external_disturbances)
+        self.AddModelToTask(self.dyn_task_str, self.external_disturbances, 6)
 
     def _add_external_disturbances_interface(self):
 
@@ -187,7 +187,7 @@ class BSKSimulationContainer(SimulationBaseClass.SimBaseClass):
         self.external_disturbances.ModelTag = CFG["basilisk"]["external_disturbances_interface"]["model_tag_str"]
 
         # add external disturbances interface object to dynamic task
-        self.AddModelToTask(self.dyn_task_str, self.external_disturbances_interface)
+        self.AddModelToTask(self.dyn_task_str, self.external_disturbances_interface, 7)
 
     def _add_actuators(self):
 
@@ -255,7 +255,7 @@ class BSKSimulationContainer(SimulationBaseClass.SimBaseClass):
         self.rw_factory.addToSpacecraft(self.spacecraft_body.ModelTag, self.rw_state_effector, self.spacecraft_body)
 
         # add reaction wheels state effector object to dynamic task
-        self.AddModelToTask(self.dyn_task_str, self.rw_state_effector, 6)
+        self.AddModelToTask(self.dyn_task_str, self.rw_state_effector, 8)
 
         # instantiate reaction wheels voltage interface object
         self.rw_voltage_interface = motorVoltageInterface.MotorVoltageInterface()
@@ -273,17 +273,7 @@ class BSKSimulationContainer(SimulationBaseClass.SimBaseClass):
         self.rw_voltage_interface.setBiases(np.array([rw_torque_bias] * rw_number))
 
         # add reaction wheels voltage interface object to dynamic task
-        self.AddModelToTask(self.dyn_task_str, self.rw_voltage_interface, 7)
-
-        # instantiate reaction wheels torque control mapping object
-        self.rw_torque_control_map = rwMotorTorque.rwMotorTorque()
-        self.rw_torque_control_map.ModelTag = CFG["basilisk"]["reaction_wheels"]["torque_control_map_model_tag_str"]
-
-        # set reaction wheels torque control mapping parameters
-        self.rw_torque_control_map.controlAxes_B = [1, 0, 0, 0, 1, 0, 0, 0, 1]
-
-        # add reaction wheels torque control mapping object to flight software task
-        self.AddModelToTask(self.fsw_task_str, self.rw_torque_control_map, 9)
+        self.AddModelToTask(self.dyn_task_str, self.rw_voltage_interface, 9)
 
         # instantiate reaction wheels torque to voltage mapping object
         self.rw_torque_voltage_map = rwMotorVoltage.rwMotorVoltage()
@@ -294,7 +284,17 @@ class BSKSimulationContainer(SimulationBaseClass.SimBaseClass):
         self.rw_torque_voltage_map.VMax = rw_voltage_max
 
         # add reaction wheels torque to voltage mapping object to flight software task
-        self.AddModelToTask(self.fsw_task_str, self.rw_torque_voltage_map, 8)
+        self.AddModelToTask(self.fsw_task_str, self.rw_torque_voltage_map, 10)
+
+        # instantiate reaction wheels torque control mapping object
+        self.rw_torque_control_map = rwMotorTorque.rwMotorTorque()
+        self.rw_torque_control_map.ModelTag = CFG["basilisk"]["reaction_wheels"]["torque_control_map_model_tag_str"]
+
+        # set reaction wheels torque control mapping parameters
+        self.rw_torque_control_map.controlAxes_B = [1, 0, 0, 0, 1, 0, 0, 0, 1]
+
+        # add reaction wheels torque control mapping object to flight software task
+        self.AddModelToTask(self.fsw_task_str, self.rw_torque_control_map, 11)
 
     def _add_navigation_sensor(self):
 
@@ -378,7 +378,7 @@ class BSKSimulationContainer(SimulationBaseClass.SimBaseClass):
         self.rl_controller_interface.ModelTag = CFG["basilisk"]["rl_controller_interface"]["model_tag_str"]
 
         # add reinforcement learning controller interface object to flight software
-        self.AddModelToTask(self.fsw_task_str, self.rl_controller_interface, 10)
+        self.AddModelToTask(self.fsw_task_str, self.rl_controller_interface, 12)
 
     def _connect_data_msgs(self):
 
