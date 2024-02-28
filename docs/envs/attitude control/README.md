@@ -42,14 +42,6 @@ In this environment, Basilisk serves as the underlying simulation engine. The si
 
 Separating the two processes enables them to be executed with different update frequencies.
 
-
-Key features of the environment include:
-
-* Simulation of spacecraft dynamics and kinematics.
-* Implementation of a traditional feedback control system for attitude stabilization.
-* Integration of a reinforcement learning agent for adaptive control.
-* Support for various configurations and parameters to facilitate experimentation and research.
-
 ## Environment Customization
 
 Customization is a fundamental aspect of this environment, empowering users to adapt the simulation setup to their research needs. Several aspects of the environment can be customized by updating specific sections of the source code and the [config.toml](../../../src/envs/attitude_control/configs/config.toml) file.
