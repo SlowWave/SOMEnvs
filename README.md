@@ -2,7 +2,7 @@
 <br/>
 <p align="center">
   <a href="https://github.com/SlowWave/SOMEnvs">
-    <img src="" alt="Logo" width="80" height="80">
+    <img src="docs/images/SOMEnvs_logo.svg" alt="Logo" width="100" height="100">
   </a>
 
   <h3 align="center">SOMEnvs</h3>
