@@ -47,10 +47,28 @@ Separating the two processes enables them to be executed with different update f
 Customization is a fundamental aspect of this environment, empowering users to adapt the simulation setup to their research needs. Several aspects of the environment can be customized by updating specific sections of the source code and the [config.toml](../../../src/envs/attitude_control/configs/config.toml) file.
 
 
+### Modify source code
 
-### Modify src
-
+- Observation Space (Storage)
+- Action Space
+- Reward Function
 
 ### Modify config.json
+
+Through the "config.toml" file, users can configure different environment parameters, tailoring simulations to their needs.
+
+#### BASILISK FRAMEWORK CONFIGS
+
+
+#### GYMNASIUM ENVIRONMENT CONFIGS
+
+
+#### REFERENCE GENERATOR CONFIGS
+
+
+#### DISTURBANCE GENERATOR CONFIGS
+
+
+
 
 
