@@ -116,8 +116,8 @@ model_id = 1
 [reference_generator]
 use_random_initial_angular_error = true
 initial_angular_error = 40                                  # [deg]
-random_initial_angular_errorr_max = 180                     # [deg]
-random_initial_angular_errorr_min = 0                       # [deg]
+random_initial_angular_error_max = 180                     # [deg]
+random_initial_angular_error_min = 0                       # [deg]
 
 # = = = = = = = = = = = = = = = = = = = = = = = = = #
 # DISTURBANCE GENERATOR CONFIGS

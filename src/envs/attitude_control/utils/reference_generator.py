@@ -20,8 +20,8 @@ class ReferenceGenerator():
         
         if CFG["reference_generator"]["use_random_initial_angular_error"]:
             
-            max_angular_error = CFG["reference_generator"]["random_initial_angular_errorr_max"]
-            min_angular_error = CFG["reference_generator"]["random_initial_angular_errorr_min"]
+            max_angular_error = CFG["reference_generator"]["random_initial_angular_error_max"]
+            min_angular_error = CFG["reference_generator"]["random_initial_angular_error_min"]
 
             self.initial_angular_error = np.random.uniform(min_angular_error, max_angular_error)
 
