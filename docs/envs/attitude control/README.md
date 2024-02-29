@@ -1,5 +1,13 @@
 # AttitudeControlEnv
 
+## Table Of Contents
+
+* [Environment Description](#environment-description)
+* [Basilisk Simulation](#basilisk-simulation)
+* [Environment Customization](#environment-customization)
+  * [Modify Source Code](#modify-source-code)
+  * [Modify Configuration File](#modify-configuration-file)
+
 ## Environment Description
 
 The objective of the [AttitudeControlEnv](../../../src/envs/attitude_control/) environment is to simulate the spacecraft attitude control problem using a combination of traditional feedback control algorithms and reinforcement learning (RL) techniques. The environment is built upon Gymnasium and Basilisk, providing high-fidelity and computationally efficient simulations along with a standardize interface for RL frameworks such as Stable-Baselines3.
@@ -47,28 +55,203 @@ Separating the two processes enables them to be executed with different update f
 Customization is a fundamental aspect of this environment, empowering users to adapt the simulation setup to their research needs. Several aspects of the environment can be customized by updating specific sections of the source code and the [config.toml](../../../src/envs/attitude_control/configs/config.toml) file.
 
 
-### Modify source code
+### Modify Source Code
 
 - Observation Space (Storage)
 - Action Space
 - Reward Function
 
-### Modify config.json
+### Modify Configuration File
 
 Through the "config.toml" file, users can configure different environment parameters, tailoring simulations to their needs.
 
+---
+
 #### BASILISK FRAMEWORK CONFIGS
 
+---
+
+#### Tasks and Processes
+
+| Parameter  | Format | Allowed Values | Description |
+| --- | --- | --- | --- |
+| dyn_process_str | string | any string | dynamics process name |
+| fsw_process_str | string | any string | flight software process name |
+| dyn_task_str | string | any string | dynamics task name |
+| fsw_task_str | string | any string | flight software process name |
+| dyn_step_frequency | float | any **positive** float | dynamic task update frequency $[Hz]$ |
+| fsw_step_frequency | float | any **positive** float | flight software task update frequency $[Hz]$ |
+
+#### Spacecraft Body Model
+
+| Parameter  | Format | Allowed Values | Description |
+| --- | --- | --- | --- |
+| model_tag_str | string | any string | spacecraft body model tag |
+| mass | float | any **positive** float | spacecraft body mass $[kg]$ |
+| moi | list of floats | $$[I_{xx}, I_{yy}, I_{zz}]$$ where $I_{xx}, I_{yy}, I_{zz}$ are **positive** floats | spacecraft body moment of inertia $[kg \cdot m^2]$ |
+| poi | list of floats | $$[I_{xy}, I_{xz}, I_{yz}]$$ where $I_{xy}, I_{xz}, I_{yz}$ are **positive** floats | spacecraft body product of inertia $[kg \cdot m^2]$ |
+| initial_angular_velocity | list of floats | $$[w_{x}, w_{y}, w_{z}]$$ where $w_{x}, w_{y}, w_{z}$ can be any float numbers | initial spacecraft angular velocity in the fixed body frame $[rad/s]$ |
+| use_random_mass | bool | true, false | if true, a random mass value is generated within the boundaries defined by *random_mass_max* and *random_mass_min* |
+| use_random_moi | bool | true, false | if true, a random moi value is generated within the boundaries defined by *random_moi_max* and *random_moi_min* |
+| use_random_poi | bool | true, false | if true, a random poi value is generated within the boundaries defined by *random_poi_max* and *random_poi_min* |
+| use_random_angular_velocity | bool | true, false | if true, a random angular velocity value is generated within the boundaries defined by *random_angular_velocity_max* and *random_angular_velocity_min* |
+| random_mass_max | float | any **positive** float | upper boundary for random mass generation $[kg]$ |
+| random_mass_min | float | any **positive** float | lower boundary for random mass generation $[kg]$ |
+| random_moi_max | list of floats | $$[I_{xx}, I_{yy}, I_{zz}]$$ where $I_{xx}, I_{yy}, I_{zz}$ are **positive** floats | upper boundaries for random moi generation $[kg \cdot m^2]$ |
+| random_moi_min | list of floats | $$[I_{xx}, I_{yy}, I_{zz}]$$ where $I_{xx}, I_{yy}, I_{zz}$ are **positive** floats | lower boundaries for random moi generation $[kg \cdot m^2]$ |
+| random_poi_max | list of floats | $$[I_{xy}, I_{zx}, I_{yz}]$$ where $I_{xx}, I_{yy}, I_{zz}$ are **positive** floats | upper boundaries for random poi generation $[kg \cdot m^2]$ |
+| random_poi_min | list of floats | $$[I_{xy}, I_{zx}, I_{yz}]$$ where $I_{xx}, I_{yy}, I_{zz}$ are **positive** floats | lower boundaries for random poi generation $[kg \cdot m^2]$ |
+| random_angular_velocity_max | list of floats | $$[w_{x}, w_{y}, w_{z}]$$ where $w_{x}, w_{y}, w_{z}$ can be any float numbers | upper boundaries for initial spacecraft angular velocity generation $[rad/s]$ |
+| random_angular_velocity_min | list of floats | $$[w_{x}, w_{y}, w_{z}]$$ where $w_{x}, w_{y}, w_{z}$ can be any float numbers | lower boundaries for initial spacecraft angular velocity generation $[rad/s]$ |
+
+#### Reaction Wheels Model
+
+| Parameter  | Format | Allowed Values | Description |
+| --- | --- | --- | --- |
+| configuration | string | "orthogonal", "pyramidal", "tetrahedral" | reaction wheels configuration: **orthogonal**: 3 reaction wheels in orthogonal configuration; **pyramidal**: 4 reaction wheels in pyramidal configuration; **thetraedral**: 4 reaction wheels in tetrahedral configuration|
+| model | string | "Honeywell_HR12", "Honeywell_HR14", "Honeywell_HR16"  | reaction wheels model |
+| angular_momentum_max | float | any **positive** float | maximum reaction wheel angular momentum $[Nms]$ |
+| torque_max | float | any **positive** float | maximum reaction wheel torque $[Nm]$ |
+| initial_angular_velocity | list of floats | $$[w_{RW1}, w_{RW2}, w_{RW3}, w_{RW4}]$$ where $w_{RW1}, w_{RW2}, w_{RW3}, w_{RW4}$ can be any float numbers | initial reaction wheels angular velocity $[rad/s]$ |
+| use_random_angular_velocity | bool | true, false | if true, a random angular velocity value is generated within the boundaries defined by *random_angular_velocity_max* and *random_angular_velocity_min* |
+| random_angular_velocity_max | list of floats | $$[w_{RW1}, w_{RW2}, w_{RW3}, w_{RW4}]$$ where $w_{RW1}, w_{RW2}, w_{RW3}, w_{RW4}$ can be any float numbers | upper boundaries for initial reaction wheels angular velocity generation $[rad/s]$ |
+| random_angular_velocity_min | list of floats | $$[w_{RW1}, w_{RW2}, w_{RW3}, w_{RW4}]$$ where $w_{RW1}, w_{RW2}, w_{RW3}, w_{RW4}$ can be any float numbers | lower boundaries for initial reaction wheels angular velocity generation $[rad/s]$ |
+| state_effector_model_tag_str | string | any string | state effector model tag |
+| voltage_interface_model_tag_str | string | any string | voltage interface model tag |
+| voltage_max | float | any **positive** float | maximum voltage available for driving a single reaction wheel $[V]$ |
+| voltage_error | float | $0 \leq$ voltage_error $\leq 1$ | percentage of constant voltage error |
+| torque_bias | float | any **positive** float | constant error on reaction wheel torque $[Nm]$ |
+| torque_control_map_model_tag_str | string | any string | torque control map model tag |
+| torque_voltage_map_model_tag_str | string | any string | torque voltage map model tag |
+
+#### Navigation Sensor Model
+
+| Parameter  | Format | Allowed Values | Description |
+| --- | --- | --- | --- |
+| model_tag_str | string | any string | navigation sensor model tag |
+| use_measurement_errors | bool | true, false | if true, the true spacecraft state is perturbed away using a gauss-markov error model |
+| attitude_meas_std | float | any **positive** float | attitude measurement error standard deviation $[deg]$ |
+| rate_meas_std | float | any **positive** float | angular rate measurement error standard deviation $[rad/s]$ |
+| attitude_error_max | float | any **positive** float | maximum attitude measurement error $[deg]$ |
+| rate_error_max | float | any **positive** float | maximum angular rate measurement error $[rad/s]$ |
+
+#### Inertial Reference Model
+
+| Parameter  | Format | Allowed Values | Description |
+| --- | --- | --- | --- |
+| model_tag_str | string | any string | inertial reference model tag |
+
+#### Atittude Tracking Error Model
+
+| Parameter  | Format | Allowed Values | Description |
+| --- | --- | --- | --- |
+| model_tag_str | string | any string | atittude tracking error model tag |
+
+#### Feedback Controller Model
+
+| Parameter  | Format | Allowed Values | Description |
+| --- | --- | --- | --- |
+| model_tag_str | string | any string | feedback controller model tag |
+| k_p | float | any **positive** float | constant proportional gain |
+| k_d | float | any **positive** float | constant derivative gain |
+
+#### Reinforcement Learning Controller Interface Model
+
+| Parameter  | Format | Allowed Values | Description |
+| --- | --- | --- | --- |
+| model_tag_str | string | any string | reinforcement learning controller interface model tag |
+
+#### External Disturbances Model
+
+| Parameter  | Format | Allowed Values | Description |
+| --- | --- | --- | --- |
+| model_tag_str | string | any string | external disturbances model tag |
+
+#### External Disturbances Interface Model
+
+| Parameter  | Format | Allowed Values | Description |
+| --- | --- | --- | --- |
+| model_tag_str | string | any string | external disturbances interface model tag |
+
+---
 
 #### GYMNASIUM ENVIRONMENT CONFIGS
 
+---
+
+#### Generic Configs
+
+| Parameter  | Format | Allowed Values | Description |
+| --- | --- | --- | --- |
+| epoch_time_horizon | float | any **positive** float | simulation time horizon for each epoch $[s]$ |
+| use_random_seed | bool | true, false | if true, random variables are generated using a fixed random seed |
+| random_seed | integer | any **positive** integer | random seed value |
+| normalize_observation | bool | true, false | if true, observation collected during each episode is normalized |
+| normalize_reward | bool | true, false | if true, reward collected during each episode is normalized |
+
+#### Observation Space
+| Parameter  | Format | Allowed Values | Description |
+| --- | --- | --- | --- |
+| model_id | integer | any **positive** integer | observation space model used during training |
+
+#### Action Space
+| Parameter  | Format | Allowed Values | Description |
+| --- | --- | --- | --- |
+| model_id | integer | any **positive** integer | action space model used during training |
+
+#### Reward Function
+| Parameter  | Format | Allowed Values | Description |
+| --- | --- | --- | --- |
+| model_id | integer | any **positive** integer | reward function model used during training |
+
+---
 
 #### REFERENCE GENERATOR CONFIGS
 
+---
+
+#### Generic Configs
+
+| Parameter  | Format | Allowed Values | Description |
+| --- | --- | --- | --- |
+| use_random_initial_angular_error | bool | true, false | if true, a random initial angular error value is generated within the boundaries defined by *random_initial_angular_error_max* and *random_initial_angular_error_min* |
+| initial_angular_error | float | $0 \leq$ initial_angular_error $\leq 180$ | initial spacecraft angular error $[deg]$ |
+| random_initial_angular_error_max | float | $0\leq$ random_initial_angular_error_max $\leq 180$ | upper boundary for initial spacecraft angular error generation $[deg]$ |
+| random_initial_angular_error_min | float | $0\leq$ random_initial_angular_error_min $\leq 180$ | lower boundary for initial spacecraft angular error generation $[deg]$ |
+
+---
 
 #### DISTURBANCE GENERATOR CONFIGS
 
+---
 
+#### Generic Configs
+| Parameter  | Format | Allowed Values | Description |
+| --- | --- | --- | --- |
+| use_disturbances | bool | true, false | if true, spacecraft dynamics is affected by external torques disturbances |
 
+#### Constant Torques
+| Parameter  | Format | Allowed Values | Description |
+| --- | --- | --- | --- |
+| disturbances_number | integer | any **positive** integer | number of constant external torque disturbances to be included in the simulation |
+| disturbances_arrays | list of lists of floats | $$[T_{ext,1}, T_{ext,2}, \ldots, T_{ext,n}]$$ where $$T_{ext,n} = [T_{n,x}, T_{n,y}, T_{n,z}]$$ defines the amplitude of the $\text{n}^{th}$ constant disturbance. Each component of $T_{ext,n}$ can be any float number | constant external torque disturbances amplitudes $[Nm]$ |
+| disturbances_time_windows | list of lists of floats | $$[t_{range,1}, t_{range,2}, \ldots, t_{range,n}]$$ where $$t_{range,n} = [t_{n,start}, t_{n,end}]$$ defines the duration of the $\text{n}^{th}$ constant disturbance. Each component of $t_{range,n}$ can be any **positive** float number | time boundaries of constant external torque disturbances $[s]$ |
+| disturbances_frames | list of strings | $$[frame_{1}, frame_{2}, \ldots, frame_{n}]$$ where $frame_{n}$ can be defined as "fixed" or "inertial" | constant external disturbances reference frames. If "fixed", the disturbances are applied according to the spacecraft body fixed reference frame. If "inertial", the disturbances are applied according to the inertial reference frame |
 
+#### Random Torques
+| Parameter  | Format | Allowed Values | Description |
+| --- | --- | --- | --- |
+| disturbances_number | integer | any **positive** integer | number of random external torque disturbances to be included in the simulation |
+| max_amplitudes | list of lists of floats | $$[T_{ext,1}, T_{ext,2}, \ldots, T_{ext,n}]$$ where $$T_{ext,n} = [T_{n,x}, T_{n,y}, T_{n,z}]$$ defines the maximum amplitude of the $\text{n}^{th}$ random disturbance. Each component of $T_{ext,n}$ can be any float number | lower boundaries for random external torque disturbances generation $[Nm]$ |
+| min_amplitudes | list of lists of floats | $$[T_{ext,1}, T_{ext,2}, \ldots, T_{ext,n}]$$ where $$T_{ext,n} = [T_{n,x}, T_{n,y}, T_{n,z}]$$ defines the minimum amplitude of the $\text{n}^{th}$ random disturbance. Each component of $T_{ext,n}$ can be any float number | upper boundaries for random external torque disturbances generation $[Nm]$ |
+| disturbances_time_windows | list of lists of floats | $$[t_{range,1}, t_{range,2}, \ldots, t_{range,n}]$$ where $$t_{range,n} = [t_{n,start}, t_{n,end}]$$ defines the duration of the $\text{n}^{th}$ random disturbance. Each component of $t_{range,n}$ can be any **positive** float number | time boundaries of random external torque disturbances $[s]$ |
+
+#### Sinusoidal Torques
+| Parameter  | Format | Allowed Values | Description |
+| --- | --- | --- | --- |
+| disturbances_number | integer | any **positive** integer | number of sinusoidal external torque disturbances to be included in the simulation |
+| disturbances_arrays | list of lists of floats | $$[T_{ext,1}, T_{ext,2}, \ldots, T_{ext,n}]$$ where $$T_{ext,n} = [T_{n,x}, T_{n,y}, T_{n,z}]$$ defines the amplitude of the $\text{n}^{th}$ sinusoidal disturbance. Each component of $T_{ext,n}$ can be any float number | sinusoidal external torque disturbances amplitudes $[Nm]$ |
+| disturbances_frequencies | list of lists of floats | $$[f_{1}, f_{2}, \ldots, f_{n}]$$ where $$f_{n} = [f_{n,x}, f_{n,y}, f_{n,z}]$$ defines the frequencies of the $\text{n}^{th}$ sinusoidal disturbance. Each component of $f_{n}$ can be any **positive** float number | sinusoidal external torque disturbances frequencies $[Hz]$ |
+| disturbances_time_windows | list of lists of floats | $$[t_{range,1}, t_{range,2}, \ldots, t_{range,n}]$$ where $$t_{range,n} = [t_{n,start}, t_{n,end}]$$ defines the duration of the $\text{n}^{th}$ sinusoidal disturbance. Each component of $t_{range,n}$ can be any **positive** float number | time boundaries of sinusoidal external torque disturbances $[s]$ |
+| disturbances_frames | list of strings | $$[frame_{1}, frame_{2}, \ldots, frame_{n}]$$ where $frame_{n}$ can be defined as "fixed" or "inertial" | sinusoidal external disturbances reference frames. If "fixed", the disturbances are applied according to the spacecraft body fixed reference frame. If "inertial", the disturbances are applied according to the inertial reference frame |
 
