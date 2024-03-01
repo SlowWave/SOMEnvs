@@ -6,7 +6,14 @@
 * [Basilisk Simulation](#basilisk-simulation)
 * [Environment Customization](#environment-customization)
   * [Modify Source Code](#modify-source-code)
+    * [Modify Observation Space](#modify-observation-space)
+    * [Modify Action Space](#modify-action-space)
+    * [Modify Reward Function](#modify-reward-function)
   * [Modify Configuration File](#modify-configuration-file)
+    * [Basilisk Framework Configs](#basilisk-framework-configs)
+    * [Gymnasium Environment Configs](#gymnasium-environment-configs)
+    * [Reference Generator Configs](#reference-generator-configs)
+    * [Disturbance Generator Configs](#disturbance-generator-configs)
 
 ## Environment Description
 
@@ -57,13 +64,138 @@ Customization is a fundamental aspect of this environment, empowering users to a
 
 ### Modify Source Code
 
-- Observation Space (Storage)
-- Action Space
-- Reward Function
+#### Modify Observation Space
+
+To create custom observation space models, follow these steps:
+
+1. Modify [observation_space.py](../../../src/envs/attitude_control/utils/observation_space.py) script by defining a new method for the `ObservationSpaceModel` class in order to define the custom observation space:
+
+``` python
+def _custom_model(self):
+
+    observation_space = # define observation space variable here #
+
+    return observation_space
+```
+
+2. Modify [observation_space.py](../../../src/envs/attitude_control/utils/observation_space.py) script by adding a key-value pair to the mapping dictionary defined into the `__init__()` method of the `ObservationSpaceModel` class. Note that it is needed to use an integer string as key:
+
+``` python
+# define mapping dictionary
+self.observation_model_map = {
+    "1": self._model_1,
+    "2": self._model_2,
+    "3": self._custom_model
+}
+```
+
+3. Modify [storage.py](../../../src/envs/attitude_control/utils/storage.py) script by defining a new method for the `Storage` class in order to collect and retrieve custom observations:
+
+``` python
+def _get_custom_obs_model(self):
+
+    observation = # define observation variable here #
+
+    return observation
+```
+
+4. Modify [storage.py](../../../src/envs/attitude_control/utils/storage.py) script by adding another key-value pair to the mapping dictionary defined into the `__init__()` method of the `Storage` class. Note that it is needed to use an integer string as key:
+
+``` python
+# define mapping dictionary
+self.obs_model_map = {
+    "1": self._get_obs_model_1,
+    "2": self._get_obs_model_2,
+    "3": self._get_custom_obs_model
+}
+```
+
+In order to use the custom model during simulation and training sessions it is needed to modify the observation space configurations in the [config.toml](../../../src/envs/attitude_control/configs/config.toml) file by updating the value of the *model_id* parameter to the one used into the mapping dictionaries.
+
+#### Modify Action Space
+
+To create custom action space models, follow these steps:
+
+1. Modify [action_space.py](../../../src/envs/attitude_control/utils/action_space.py) script by defining a new method for the `ActionSpaceModel` class in order to define the custom action space:
+
+``` python
+def _custom_model(self):
+
+    action_space = # define action space variable here #
+
+    return action_space
+```
+
+2. Modify [action_space.py](../../../src/envs/attitude_control/utils/action_space.py) script by defining a new method for the `ActionSpaceModel` class in order to elaborate the action associated to the custom model:
+
+``` python
+def _elaborate_custom_action(self, action, storage):
+
+    action = # define action variable here #
+
+    return action
+```
+
+3. Modify [action_space.py](../../../src/envs/attitude_control/utils/action_space.py) script by adding a key-value pair to the mapping dictionaries defined into the `__init__()` method of the `ActionSpaceModel` class. Note that it is needed to use an integer string as key:
+
+``` python
+# define mapping dictionaries
+self.action_model_map = {
+    "1": self._model_1,
+    "2": self._model_2,
+    "3": self._model_3,
+    "4": self._model_4,
+    "5": self._custom_model
+}
+
+self.action_elaboration_map = {
+    "1": self._elaborate_action_1,
+    "2": self._elaborate_action_2,
+    "3": self._elaborate_action_3,
+    "4": self._elaborate_action_4,
+    "5": self._elaborate_custom_action
+}
+```
+
+In order to use the custom model during simulation and training sessions it is needed to modify the action space configurations in the [config.toml](../../../src/envs/attitude_control/configs/config.toml) file by updating the value of the *model_id* parameter to the one used into the mapping dictionaries.
+
+#### Modify Reward Function
+
+To create custom reward function models, follow these steps:
+
+1. Modify [reward_function.py](../../../src/envs/attitude_control/utils/reward_function.py) script by defining a new method for the `RewardFunctionModel` class in order to define the custom reward function:
+
+``` python
+def _custom_model(slef, storage):
+
+    # write reward algorithm here #
+    r_1 = # float based on reward logic #
+    r_2 = # float based on reward logic #
+    ...
+    r_n = # float based on reward logic #
+
+    is_last_reward = # (bool) True or False, based on reward logic #
+    rewards = [r_1, r_2, ..., r_n]
+
+    return is_last_reward, rewards
+```
+
+2. Modify [reward_function.py](../../../src/envs/attitude_control/utils/reward_function.py) script by adding a key-value pair to the mapping dictionary defined into the `__init__()` method of the `RewardFunctionModel` class. Note that it is needed to use an integer string as key:
+
+``` python
+# define mapping dictionary
+self.reward_model_map = {
+    "1": self._model_1,
+    "2": self._model_2,
+    "3": self._custom_model
+}
+```
+
+In order to use the custom model during simulation and training sessions it is needed to modify the reward function configurations in the [config.toml](../../../src/envs/attitude_control/configs/config.toml) file by updating the value of the *model_id* parameter to the one used into the mapping dictionary.
 
 ### Modify Configuration File
 
-Through the "config.toml" file, users can configure different environment parameters, tailoring simulations to their needs.
+Through the [config.toml](../../../src/envs/attitude_control/configs/config.toml) file, users can configure several environment parameters, tailoring simulations to their needs.
 
 ---
 
@@ -190,16 +322,19 @@ Through the "config.toml" file, users can configure different environment parame
 | normalize_reward | bool | true, false | if true, reward collected during each episode is normalized |
 
 #### Observation Space
+
 | Parameter  | Format | Allowed Values | Description |
 | --- | --- | --- | --- |
 | model_id | integer | any **positive** integer | observation space model used during training |
 
 #### Action Space
+
 | Parameter  | Format | Allowed Values | Description |
 | --- | --- | --- | --- |
 | model_id | integer | any **positive** integer | action space model used during training |
 
 #### Reward Function
+
 | Parameter  | Format | Allowed Values | Description |
 | --- | --- | --- | --- |
 | model_id | integer | any **positive** integer | reward function model used during training |
@@ -226,11 +361,13 @@ Through the "config.toml" file, users can configure different environment parame
 ---
 
 #### Generic Configs
+
 | Parameter  | Format | Allowed Values | Description |
 | --- | --- | --- | --- |
 | use_disturbances | bool | true, false | if true, spacecraft dynamics is affected by external torques disturbances |
 
 #### Constant Torques
+
 | Parameter  | Format | Allowed Values | Description |
 | --- | --- | --- | --- |
 | disturbances_number | integer | any **positive** integer | number of constant external torque disturbances to be included in the simulation |
@@ -239,6 +376,7 @@ Through the "config.toml" file, users can configure different environment parame
 | disturbances_frames | list of strings | $$[frame_{1}, frame_{2}, \ldots, frame_{n}]$$ where $frame_{n}$ can be defined as "fixed" or "inertial" | constant external disturbances reference frames. If "fixed", the disturbances are applied according to the spacecraft body fixed reference frame. If "inertial", the disturbances are applied according to the inertial reference frame |
 
 #### Random Torques
+
 | Parameter  | Format | Allowed Values | Description |
 | --- | --- | --- | --- |
 | disturbances_number | integer | any **positive** integer | number of random external torque disturbances to be included in the simulation |
@@ -247,6 +385,7 @@ Through the "config.toml" file, users can configure different environment parame
 | disturbances_time_windows | list of lists of floats | $$[t_{range,1}, t_{range,2}, \ldots, t_{range,n}]$$ where $$t_{range,n} = [t_{n,start}, t_{n,end}]$$ defines the duration of the $\text{n}^{th}$ random disturbance. Each component of $t_{range,n}$ can be any **positive** float number | time boundaries of random external torque disturbances $[s]$ |
 
 #### Sinusoidal Torques
+
 | Parameter  | Format | Allowed Values | Description |
 | --- | --- | --- | --- |
 | disturbances_number | integer | any **positive** integer | number of sinusoidal external torque disturbances to be included in the simulation |
